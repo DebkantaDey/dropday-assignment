@@ -1,89 +1,40 @@
-# Drop Day
+# Drop Day Storefront
 
-A flash-sale storefront for limited-stock product drops: scheduled releases, 60-second
-holds, contested stock, and honest failure states. Frontend-only submission with a real
-backend behind the same API boundary (Next.js Route Handlers, in-memory store).
+This is my submission for the Frontend Developer Assignment. It is a simulated flash-sale storefront called **Drop Day** where items go live at scheduled times and stock is limited. 
 
-## Setup
+Instead of a standard cart, it uses a **60-second hold timer** for each item. If you do not check out in time, the stock goes back to the public pool and other simulated shoppers can grab it!
 
-```
-pnpm install
-pnpm dev
-```
+## How to Run It
 
-Open http://localhost:3000. That's it — no env vars, no database, no auth.
+You only need two commands to get the app running locally:
 
-> This sandbox has no network access, so dependencies were never installed or built here.
-> The code was written directly against Next.js 14 / React 18 / Zustand 4 APIs; run
-> `pnpm install` locally to pull the packages before `pnpm dev`.
+1. `pnpm install` (to install the node packages)
+2. `pnpm dev` (to start the Next.js local development server)
 
-## Architecture tour
+Now, just open `http://localhost:3000` in your browser. There is no database setup or environment variables to configure.
 
-```
-app/
-  api/                    Route Handlers = the "real backend"
-    products/route.ts          GET  list products
-    products/[id]/hold/route.ts POST place a 60s hold
-    holds/route.ts              GET  list this session's holds
-    holds/[id]/route.ts         DELETE release a hold
-    checkout/route.ts           POST convert holds -> order
-  page.tsx, layout.tsx     Shell
-lib/
-  api-client.ts           THE API BOUNDARY. Every component calls through
-                          `api.*`, never `fetch` directly. Swapping the mock
-                          for a real backend means changing BASE_URL here —
-                          nothing else in the app changes.
-  store.ts                Zustand store. Holds client state, calls `api.*`,
-                          reconciles server responses into notices (e.g. "your
-                          hold expired").
-  server/db.ts            In-memory DB + the simulation heartbeat: promotes
-                          scheduled drops, expires holds, lets simulated other
-                          shoppers take stock, drifts the hype meter. This is
-                          the ONLY place mutable state lives.
-  server/simulate.ts      Latency + random-failure injection for route
-                          handlers, so the UI has to handle real-world
-                          network conditions.
-  useCountdown.ts         Client-side ticking hook, purely a display
-                          projection — never the source of truth for expiry.
-components/
-  ProductGrid / ProductCard / StockBar / CountdownChip  Storefront
-  HoldsPanel / HoldTicket / CountdownRing               Cart, ticket-stub styled
-  CheckoutModal                                         Summary -> confirm -> success/failure
-  NoticeStack                                           Toasts for expiry / release / errors
-```
+## Project Structure & Data Flow
 
-### Data flow
+Here is a quick tour of how the code is organized:
 
-Component -> `lib/store.ts` action -> `lib/api-client.ts` -> `/app/api/*` route handler ->
-`lib/server/db.ts`. Every layer only knows the layer directly below it. The store never
-reaches into `db.ts` and no component ever calls `fetch`.
+*   **`app/`**: Standard Next.js App Router folders. The `app/api/` folder contains real Next.js Route Handlers that act as our backend.
+*   **`components/`**: React UI components. The storefront grid is in `ProductGrid`, the cart/holds sidebar is in `HoldsPanel`, and the checkout modal is in `CheckoutModal`.
+*   **`lib/api-client.ts`**: The client-side service module. Components and store actions call this module instead of using `fetch` directly. If we want to connect a real production database tomorrow, we only need to change the base URL here.
+*   **`lib/store.ts`**: A Zustand store that manages global state (like active holds, toast notifications, and checkout stages).
+*   **`lib/server/db.ts`**: An in-memory store that holds our mock database state. It has a background loop (`setInterval` ticking once a second) that updates watchers, simulates other shoppers buying items, and expires active holds.
+*   **`lib/server/simulate.ts`**: Helper scripts that inject random latencies (200-1100ms) and network failures into our API routes to make sure our frontend handles real-world conditions robustly.
 
-### Wildcard picked: Hype Meter
+## Visual Design & Theme
 
-Each live product carries a `watchers` count that random-walks every server tick and is
-rendered as a small eye-icon badge on the card. It's a lightweight urgency signal that
-doesn't gate any functionality — it's cosmetic pressure, same as a real flash-sale site.
+I designed the UI to feel like physical raffle stubs or tickets:
+*   A clean, cool gray paper background (`#EEF0F3`) with a subtle grid pattern.
+*   **Fraunces** (serif) for bold headlines and product names.
+*   **Work Sans** (sans-serif) for readable body text.
+*   **IBM Plex Mono** (monospace) for prices, stock units, and timers.
+*   The page container is set to **80% screen width** and configured with a high-density **4-column layout** on desktop screens so it feels like a real storefront.
 
-### Design system
+## Wildcards Implemented
 
-Light theme, grounded in a ticket-counter / raffle-stub metaphor rather than a generic
-dashboard look: cool paper background, serif display face (Fraunces) for product names,
-Work Sans for body copy, IBM Plex Mono for anything numeric (prices, countdowns, stock
-counts). Product cards carry a punched "tag hole" in the top-left corner as the signature
-visual element; the Holds Panel reuses the same ticket vocabulary with perforated edges.
-Status color is functional, not decorative: cobalt blue = live/actionable, gold = drops
-soon, brick red = danger/expired/sold out — the same three roles carry through badges,
-buttons, the stock gauge, and toasts, using [lucide-react](https://lucide.dev) icons
-throughout instead of ad-hoc glyphs.
-
-Product photos are pulled from Unsplash by direct CDN URL (`lib/server/db.ts`). Each
-`ProductCard` has an `onError` fallback that swaps a broken image for a clean "no photo"
-placeholder rather than a broken-image icon, so the storefront still looks intentional if
-a particular URL is ever unavailable.
-
-### Known limits (in scope per the brief)
-
-- No auth — a session is a random id in `localStorage`, shared by all tabs on one browser.
-- No payments — checkout is a mock success/failure with no charge.
-- State is in-memory and resets on server restart (or on Vercel, on cold start / redeploy).
-- No automated tests, per the brief's timebox.
+I ended up building **two** wildcards:
+1.  **Hype Meter**: Product cards display live "watchers" (viewers). This count goes up and down randomly on the server to create visual urgency.
+2.  **Panic Mode**: When a hold timer drops below 10 seconds, the ticket turns red and pulses to nudge the user to checkout.
