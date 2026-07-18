@@ -20,7 +20,7 @@ interface DropDayState {
   holds: Hold[];
   holdsStatus: LoadStatus;
 
-  pendingHoldProductId: string | null; // product currently being requested — disables its button
+  pendingHoldProductId: string | null;
 
   notices: Notice[];
 

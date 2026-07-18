@@ -28,7 +28,6 @@ export function ProductCard({
         isSoldOut ? "border-line opacity-70" : "border-line hover:-translate-y-0.5 hover:shadow-lg"
       )}
     >
-      {/* punched tag hole + string, top-left */}
       <div className="pointer-events-none absolute left-4 top-4 z-10 h-4 w-4 rounded-full border-2 border-line bg-paper" />
       <svg className="pointer-events-none absolute left-[26px] top-[15px] z-10" width="18" height="14" viewBox="0 0 18 14" fill="none">
         <path d="M1 1c4 1 4 11 16 11" stroke={isSoldOut ? "#9AA0AA" : product.accent} strokeWidth="1.5" strokeLinecap="round" />

@@ -22,7 +22,6 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     const body = await req.json();
     if (typeof body?.quantity === "number" && body.quantity > 0) quantity = Math.floor(body.quantity);
   } catch {
-    // no body, default to 1
   }
 
   const result = createHold(params.id, quantity, sessionId);

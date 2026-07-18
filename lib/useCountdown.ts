@@ -1,12 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
 
-/**
- * Ticks down to `targetIso` for display purposes only. This is a projection,
- * not the source of truth — the server enforces real expiry independently,
- * and the client resyncs via polling, so any clock drift self-corrects
- * within a few seconds instead of accumulating.
- */
 export function useCountdown(targetIso: string | null) {
   const [msLeft, setMsLeft] = useState<number>(() =>
     targetIso ? new Date(targetIso).getTime() - Date.now() : 0

@@ -8,10 +8,10 @@ export interface Product {
   totalStock: number;
   availableStock: number;
   status: ProductStatus;
-  dropAt: string | null; // ISO timestamp, only meaningful for "dropping_soon"
-  watchers: number; // hype meter — live viewer count
-  accent: string; // hex, per-product tag color
-  image: string; // product photo URL
+  dropAt: string | null;
+  watchers: number;
+  accent: string;
+  image: string;
 }
 
 export type HoldStatus = "active" | "expired" | "released" | "converted";
@@ -23,8 +23,8 @@ export interface Hold {
   price: number;
   quantity: number;
   sessionId: string;
-  createdAt: string; // ISO
-  expiresAt: string; // ISO — authoritative, set by the server
+  createdAt: string;
+  expiresAt: string;
   status: HoldStatus;
 }
 

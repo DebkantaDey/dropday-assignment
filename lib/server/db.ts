@@ -1,12 +1,5 @@
 import { Product, Hold, Order } from "@/lib/types";
 
-// ---------------------------------------------------------------------------
-// This module is the ONLY place that owns mutable state. Route handlers call
-// into it; nothing outside /app/api and this file touches `products` or
-// `holds` directly. Swap this file for a real DB client and the rest of the
-// app — including the client-side service module — does not change.
-// ---------------------------------------------------------------------------
-
 const HOLD_DURATION_MS = 60_000;
 
 interface DB {
@@ -17,15 +10,12 @@ interface DB {
   started: boolean;
 }
 
-// Survive Next.js dev-server hot reloads by pinning state on globalThis.
 const g = globalThis as unknown as { __dropDayDb?: DB };
 
 function seedProducts(): Map<string, Product> {
   const now = Date.now();
   const IMG = "https://images.unsplash.com";
   const q = "?w=900&q=80&auto=format&fit=crop";
-  // The accent rotates across four ink colors used for the tag string —
-  // status color (live/soon/danger) is applied separately in the UI.
   const COBALT = "#1D3FD1";
   const GOLD = "#B8860B";
   const BRICK = "#C22B1D";
@@ -72,26 +62,19 @@ function nextId(prefix: string, db: DB) {
   return `${prefix}_${db.seq++}`;
 }
 
-// The simulation heartbeat: promotes drops, expires holds, lets "other
-// shoppers" contend for stock, and drifts the hype meter. This is the single
-// source of truth for time-based state — the UI never decides expiry itself.
 function tick(db: DB) {
   const now = Date.now();
 
   for (const product of db.products.values()) {
-    // Promote scheduled drops.
     if (product.status === "dropping_soon" && product.dropAt && new Date(product.dropAt).getTime() <= now) {
       product.status = product.availableStock > 0 ? "live" : "sold_out";
     }
 
-    // Hype meter drift — small random walk, clamped, so it feels alive without
-    // being distracting.
     if (product.status !== "sold_out") {
       const delta = Math.floor(Math.random() * 11) - 5;
       product.watchers = Math.max(3, product.watchers + delta);
     }
 
-    // Simulated other shoppers quietly take live stock.
     if (product.status === "live" && product.availableStock > 0 && Math.random() < 0.06) {
       product.availableStock -= 1;
       if (product.availableStock === 0) product.status = "sold_out";

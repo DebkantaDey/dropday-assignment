@@ -20,7 +20,6 @@ export function HoldTicket({ hold, onRelease }: { hold: Hold; onRelease: (id: st
         expired ? "border-danger/40 bg-danger-ink" : panic ? "border-danger/50" : "border-line"
       )}
     >
-      {/* ticket perforation */}
       <div className="absolute -left-[7px] top-1/2 h-3.5 w-3.5 -translate-y-1/2 rounded-full bg-surface2 border border-line" />
       <div className="absolute -right-[7px] top-1/2 h-3.5 w-3.5 -translate-y-1/2 rounded-full bg-surface2 border border-line" />
 

@@ -1,7 +1,5 @@
 import clsx from "clsx";
 
-// A deli-counter style stock gauge: a digital count plus a thin, precise
-// progress line beneath it — reads like inventory data, not a game meter.
 export function StockGauge({
   available,
   total,

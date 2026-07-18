@@ -15,9 +15,6 @@ export function DropDayApp() {
   const fetchHolds = useDropDayStore((s) => s.fetchHolds);
   const openCheckout = useDropDayStore((s) => s.openCheckout);
 
-  // Two open tabs share one sessionId via localStorage, and both poll the
-  // same server state, so a hold placed in tab A appears in tab B within one
-  // poll cycle. See DECISIONS.md, question 5.
   useEffect(() => {
     fetchProducts();
     fetchHolds();

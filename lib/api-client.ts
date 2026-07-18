@@ -1,13 +1,5 @@
 import { ApiError, ApiResult, Hold, Order, Product } from "@/lib/types";
 
-// ---------------------------------------------------------------------------
-// This is the ONE boundary components are allowed to call through. Today it
-// hits Next.js Route Handlers under /app/api; it could hit a real backend on
-// a different host tomorrow by changing BASE_URL below — nothing else in the
-// app would need to change, since every call already returns the same
-// ApiResult<T> shape regardless of transport.
-// ---------------------------------------------------------------------------
-
 const BASE_URL = "/api";
 
 function getSessionId(): string {
