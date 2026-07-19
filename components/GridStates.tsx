@@ -30,7 +30,7 @@ export function GridEmpty() {
   return (
     <div className="flex flex-col items-center gap-2 rounded-2xl border border-line bg-surface px-6 py-16 text-center">
       <PackageSearch className="text-muted" size={28} strokeWidth={1.5} />
-      <p className="font-display text-lg text-ink">Nothing's dropping right now</p>
+      <p className="font-display text-lg text-ink">Nothing&apos;s dropping right now</p>
       <p className="max-w-sm text-sm text-muted">Check back soon — new products are scheduled throughout the day.</p>
     </div>
   );
