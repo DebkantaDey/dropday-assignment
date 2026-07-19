@@ -13,7 +13,7 @@ export function Header() {
         </div>
       </div>
       <p className="hidden max-w-[240px] text-right text-xs leading-relaxed text-muted sm:block">
-        Adding an item holds it for 60 seconds. It isn't yours until checkout clears.
+        Adding an item holds it for 60 seconds. It isn&apos;t yours until checkout clears.
       </p>
     </header>
   );
