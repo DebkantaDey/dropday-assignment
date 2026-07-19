@@ -96,7 +96,7 @@ export function CheckoutModal() {
         {stage === "failed" && (
           <div className="flex flex-col items-center gap-3 py-6 text-center">
             <AlertTriangle className="text-danger" size={36} strokeWidth={1.5} />
-            <h2 className="font-display text-lg text-ink">Checkout didn't go through</h2>
+            <h2 className="font-display text-lg text-ink">Checkout didn&apos;t go through</h2>
             <p className="max-w-xs text-sm text-muted">{error}</p>
             {expiredIds.length > 0 && (
               <p className="max-w-xs text-xs text-muted">
