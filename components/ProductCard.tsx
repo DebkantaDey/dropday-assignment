@@ -5,6 +5,7 @@ import { Radio, Eye, Ban, ImageOff } from "lucide-react";
 import { Product } from "@/lib/types";
 import { StockGauge } from "@/components/StockBar";
 import { CountdownChip } from "@/components/CountdownChip";
+import Image from "next/image";
 
 export function ProductCard({
   product,
@@ -35,9 +36,11 @@ export function ProductCard({
 
       <div className="relative aspect-[4/3] w-full overflow-hidden bg-surface2">
         {!imgFailed ? (
-          <img
+          <Image
             src={product.image}
             alt={product.name}
+            width={400}
+            height={400}
             loading="lazy"
             onError={() => setImgFailed(true)}
             className={clsx(
